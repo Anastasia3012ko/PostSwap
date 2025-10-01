@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { AuthRequest } from '../middlewares/authMiddleware.js';
 import User, { IUser } from '../models/User.js';
 import bcrypt from 'bcrypt';
@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const registerUser = async (
-  req: AuthRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
@@ -25,7 +25,7 @@ export const registerUser = async (
       return;
     }
     const newUser = new User({ fullName, userName, email, password });
-    newUser.save();
+    await newUser.save();
     res.status(201).json({
       message: 'User registered successfully',
       user: { _id: newUser._id, userName, email },
@@ -43,7 +43,7 @@ export const registerUser = async (
 };
 
 export const loginUser = async (
-  req: AuthRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
@@ -93,19 +93,13 @@ export const logoutUser = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { userId } = req.params;
-    if (req.userId !== userId) {
-      res
-        .status(403)
-        .json({ message: 'Forbidden: you can logout only your profile' });
-      return;
-    }
+  
     res.clearCookie('token', {
       httpOnly: true,
       secure: false,
       sameSite: 'strict',
     });
-    res.json({ message: 'Logged out successfully' });
+    res.json({ message: 'Logged out successfully', userId: req.userId });
   } catch (error) {
     console.error('Error with logout user');
 
@@ -117,7 +111,7 @@ export const logoutUser = async (
 };
 
 export const forgotPassword = async (
-  req: AuthRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
@@ -159,7 +153,7 @@ export const forgotPassword = async (
 };
 
 export const resetPassword = async (
-  req: AuthRequest,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {

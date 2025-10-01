@@ -11,19 +11,18 @@ export const createPost = async (
 ): Promise<void> => {
   try {
     const { description } = req.body;
-    const file: Express.Multer.File | undefined = req.file;
 
-    if (!file) {
-      res.status(400).json({ error: 'No file uploaded' });
-      return;
-    }
     if (!req.userId) {
       res.status(401).json({ error: 'Unauthorized: missing userId' });
       return;
     }
+    if (!req.file) {
+      res.status(400).json({ error: 'No file uploaded' });
+      return;
+    }
 
+    const file: Express.Multer.File = req.file;
     const image = await uploadSinglePhoto(file, req.userId, 'posts');
-
     const post = new Post({
       description,
       photo: image._id,
@@ -61,12 +60,10 @@ export const getPostById = async (req: AuthRequest, res: Response) => {
       'Error getting post by ID:',
       error instanceof Error ? error.message : error
     );
-    res
-      .status(500)
-      .json({
-        message: 'Server error',
-        error: error instanceof Error ? error.message : error,
-      });
+    res.status(500).json({
+      message: 'Server error',
+      error: error instanceof Error ? error.message : error,
+    });
   }
 };
 
@@ -82,12 +79,10 @@ export const getAllPosts = async (_req: AuthRequest, res: Response) => {
       'Error getting all posts:',
       error instanceof Error ? error.message : error
     );
-    res
-      .status(500)
-      .json({
-        message: 'Server error',
-        error: error instanceof Error ? error.message : error,
-      });
+    res.status(500).json({
+      message: 'Server error',
+      error: error instanceof Error ? error.message : error,
+    });
   }
 };
 
@@ -111,12 +106,10 @@ export const getAllPostsOneUser = async (req: AuthRequest, res: Response) => {
       'Error getting user posts:',
       error instanceof Error ? error.message : error
     );
-    res
-      .status(500)
-      .json({
-        message: 'Server error',
-        error: error instanceof Error ? error.message : error,
-      });
+    res.status(500).json({
+      message: 'Server error',
+      error: error instanceof Error ? error.message : error,
+    });
   }
 };
 
@@ -124,9 +117,8 @@ export const updatePost = async (req: AuthRequest, res: Response) => {
   try {
     const { postId } = req.params;
     const description = req.body.description;
-    const file = req.file;
-
-    if (!description && !file) {
+    
+    if (!description && !req.file) {
       return res.status(400).json({ message: 'Nothing to update' });
     }
 
@@ -150,7 +142,8 @@ export const updatePost = async (req: AuthRequest, res: Response) => {
       post.description = description.trim();
     }
 
-    if (file) {
+    if (req.file) {
+      const file: Express.Multer.File = req.file;
       if (post.photo) {
         const oldPhoto = await Image.findById(post.photo);
         if (oldPhoto) {
@@ -175,12 +168,10 @@ export const updatePost = async (req: AuthRequest, res: Response) => {
       'Error updating post description:',
       error instanceof Error ? error.message : error
     );
-    res
-      .status(500)
-      .json({
-        message: 'Server error',
-        error: error instanceof Error ? error.message : error,
-      });
+    res.status(500).json({
+      message: 'Server error',
+      error: error instanceof Error ? error.message : error,
+    });
   }
 };
 
@@ -206,11 +197,9 @@ export const deletePostById = async (req: AuthRequest, res: Response) => {
       'Error deleting post:',
       error instanceof Error ? error.message : error
     );
-    res
-      .status(500)
-      .json({
-        message: 'Server error',
-        error: error instanceof Error ? error.message : error,
-      });
+    res.status(500).json({
+      message: 'Server error',
+      error: error instanceof Error ? error.message : error,
+    });
   }
 };

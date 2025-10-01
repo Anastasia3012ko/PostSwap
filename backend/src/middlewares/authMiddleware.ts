@@ -7,17 +7,22 @@ dotenv.config();
 export interface AuthRequest extends Request {
   userId?: string;
 }
+interface JwtPayloadWithUserId extends JwtPayload {
+  userId: string;
+}
 
 export const protect = (
   req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.cookies.token;
+  const token: string | undefined = req.cookies?.token;
+  console.log(token);
+  
   if (!token) return res.status(401).json({ message: 'Not authorized' });
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayloadWithUserId;
     if (!decoded || typeof decoded !== 'object' || !decoded.userId) {
       res.status(401).json({ message: 'Invalid token' });
       return;

@@ -1,6 +1,8 @@
 import mongoose, { Document, Schema, Types, Model } from 'mongoose';
 import User, { IUser } from './User.js';
 import { IImage } from './Image.js';
+import { ILike } from './Like.js';
+import { IComment } from './Comment.js';
 
 export interface IPost extends Document {
   user: Types.ObjectId | IUser;
@@ -10,6 +12,10 @@ export interface IPost extends Document {
   commentsCount: number;
   createdAt: Date;
   updatedAt: Date;
+
+  likes?: (ILike & Document)[]; // virtual
+  comments?: (IComment & Document)[]; // virtual
+  
 }
 
 const postSchema: Schema<IPost> = new Schema<IPost>(
@@ -31,13 +37,14 @@ const postSchema: Schema<IPost> = new Schema<IPost>(
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-postSchema.post<IPost>('save', async function () {
+postSchema.pre<IPost>('save', async function () {
   try {
     if (this.isNew) {
       await User.updateOne(
         { _id: this.user },
         { $inc: { postsCount: 1 } }
       ).exec();
+      
     }
   } catch (error) {
     
@@ -47,7 +54,7 @@ postSchema.post<IPost>('save', async function () {
   }
 });
 
-postSchema.post<IPost>('deleteOne', { document: true, query: false }, async function () {
+postSchema.pre<IPost>('deleteOne', { document: true, query: false }, async function () {
   try {
     const doc = this as IPost;
     await User.updateOne({ _id: doc.user }, { $inc: { postsCount: -1 } }).exec();

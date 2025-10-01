@@ -2,7 +2,7 @@ import mongoose, { Document, Schema, Types, Model } from 'mongoose';
 import bcrypt from "bcrypt";
 import { IImage } from './Image.js';
 import { IPost } from './Post.js';
-import { IFollow } from './Follow.js';
+import Follow, { IFollow } from './Follow.js';
 
 export interface IUser extends Document {
   fullName: string;
@@ -20,9 +20,9 @@ export interface IUser extends Document {
   resetCode?: number;
   resetCodeExpires?: number;
 
-  posts?: Types.DocumentArray<IPost>; // virtual
-  followers?: Types.DocumentArray<IFollow>; // virtual
-  following?: Types.DocumentArray<IFollow>; // virtual
+  posts?: (IPost & Document)[]; // virtual
+  followers?: (IFollow & Document)[]; // virtual
+  following?: (IFollow & Document)[]; // virtual
 }
 
 const userSchema: Schema<IUser> = new Schema<IUser>(

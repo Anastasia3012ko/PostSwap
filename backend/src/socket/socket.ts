@@ -4,7 +4,7 @@ import Chat, { IChat } from '../models/Chat.js';
 import Message,{ IMessage } from '../models/Message.js';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-interface AuthenticatedSocket extends Socket {
+interface AuthSocket extends Socket {
   userId?: string;
 }
 
@@ -29,7 +29,7 @@ export const initSocket = (server: HTTPServer) => {
   });
 
   // auth connect with jwt
-  io.use((socket: AuthenticatedSocket, next) => {
+  io.use((socket: AuthSocket, next) => {
     try {
       // token from cookie
       const token = socket.handshake.headers.cookie?.split('token=')[1];
@@ -47,7 +47,7 @@ export const initSocket = (server: HTTPServer) => {
   });
 
   //connect with room (chat Id)
-  io.on('connection', (socket: AuthenticatedSocket) => {
+  io.on('connection', (socket: AuthSocket) => {
     console.log(`User connected: ${socket.id}, userId: ${socket.userId}`);
 
     socket.on('joinRoom', async ({ chatId }) => {
