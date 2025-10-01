@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+   font-family: "Roboto", sans-serif; 
+   
+}
+main {
+  flex: 1;
+}
+a {
+  text-decoration: none;
+  cursor: pointer;
+  color: rgba(0, 55, 107, 1);
+}
+input {
+  font-family: "Roboto", sans-serif; 
+  outline: none; 
+}
+button {
+  cursor: pointer;
+  border: none;
+  font-family: "Roboto", sans-serif; 
+  border-radius: 8px;
+  background: rgba(0, 149, 246, 1);
+  color: white;
+  padding: 7px 0;
+}
+li {
+  list-style: none;
+}
