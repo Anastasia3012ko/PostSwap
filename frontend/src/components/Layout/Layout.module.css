@@ -1,0 +1,17 @@
+.layoutContainer {
+  display: flex;
+}
+
+.mainContainer {
+  flex: 1;
+  margin-left: 245px;
+  height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+main {
+    flex: 1;
+}

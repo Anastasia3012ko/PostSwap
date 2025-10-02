@@ -1,16 +1,19 @@
-import React from 'react'
-import Header from '../Header/Header'
-import Footer from '../Footer/Footer'
-import { ScrollRestoration } from 'react-router-dom'
+import React from 'react';
+import styles from './Layout.module.css'
+import SideBar from '../SideBar/SideBar';
+import Footer from '../Footer/Footer';
+
 
 const Layout = ({ children }) => {
   return (
-    <>
-      <Header />
-      <main>{children}</main>
-      <Footer />
-    </>
-  )
-}
+    <div className={styles.layoutContainer}>
+      <SideBar />
+      <div className={styles.mainContainer}>
+        <main>{children}</main>
+        <Footer />
+      </div>
+    </div>
+  );
+};
 
-export default Layout
+export default Layout;

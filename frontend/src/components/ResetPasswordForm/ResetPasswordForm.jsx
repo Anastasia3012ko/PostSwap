@@ -30,14 +30,14 @@ const ResetPasswordForm = () => {
         </form>
         <Link
           style={{ color: 'rgba(38, 38, 38, 1)', marginBottom: '85px' }}
-          to={'/register'}
+          to="/register"
         >
           Create new account
         </Link>
       </div>
 
       <div className={styles.containerTwo}>
-        <Link style={{ color: 'rgba(38, 38, 38, 1)' }} to={'/login'}>
+        <Link style={{ color: 'rgba(38, 38, 38, 1)' }} to="/login">
           Back to login
         </Link>{' '}
       </div>

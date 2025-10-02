@@ -35,7 +35,7 @@ function LoginForm() {
             </div>
             <Link
               className={styles.link}
-              to={'/reset'}
+              to='/reset'
             >
               Forgot password?
             </Link>
@@ -44,7 +44,7 @@ function LoginForm() {
         <div className={styles.containerTwo}>
           <p className={styles.parTwo}>
             Don't have an account?{' '}
-            <Link style={{ color: 'rgba(0, 149, 246, 1)' }} to={'/register'}>
+            <Link style={{ color: 'rgba(0, 149, 246, 1)' }} to='/register'>
               Sing up
             </Link>{' '}
           </p>

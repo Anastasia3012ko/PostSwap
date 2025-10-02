@@ -52,7 +52,7 @@ function RegisterForm() {
       </div>
       <div className={styles.containerTwo}>
         <p className={styles.parTwo}>
-          Have an account? <Link style={{color: 'rgba(0, 149, 246, 1)'}} to={'/login'}>Log in</Link>{' '}
+          Have an account? <Link style={{color: 'rgba(0, 149, 246, 1)'}} to='/login'>Log in</Link>{' '}
         </p>
       </div>
     </div>

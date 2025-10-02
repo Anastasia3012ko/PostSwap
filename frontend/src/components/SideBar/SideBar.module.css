@@ -1,0 +1,98 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.65);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+.overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 245px;
+  height: 100vh;
+  background-color: white;
+  border-right: 1px solid var(--border-color);
+  padding: 25px;
+
+  z-index: 1000;
+}
+
+.logo {
+  width: 180px;
+  margin-bottom: 25px;
+}
+
+.sidebar ul {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin: 15px 0;
+}
+.link,
+.linkActive {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 1);
+}
+.linkActive {
+  font-size: 18px;
+  font-weight: 700;
+  transform: ease 1s;
+}
+
+.sidebar button,
+.activePanel button {
+  background: none;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.activePanel {
+  position: fixed;
+  top: 0;
+  left: 245px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 400px;
+  height: 100vh;
+  background-color: white;
+  border-right: 1px solid var(--border-color);
+  border-radius: 0px 16px 16px 0px;
+  padding: 20px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  transform: translateX(-100%);
+  transition: 0.3s ease;
+}
+.activeHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.activePanel.open {
+  transform: translateX(0);
+}
