@@ -14,16 +14,35 @@ export const registerUser = async (
   try {
     const { fullName, userName, email, password } = req.body;
     if (!fullName || !userName || !email || !password) {
-      res
-        .status(400)
-        .json({ error: 'Full name, user name, email, password are required!' });
+      res.status(400).json({
+        general: 'Full name, user name, email, password are required!',
+      });
       return;
     }
+
+    const fieldErrors: { [key: string]: string } = {};
+
+     if (!password || password.length < 6) {
+      fieldErrors.password = 'Password must be at least 6 characters long';
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      res.status(400).json({ message: 'User with this email already exists' });
+      fieldErrors.email = 'User with this email already exists';
+    }
+
+    const existingUserByUserName = await User.findOne({ userName });
+    if (existingUserByUserName) {
+      fieldErrors.userName = 'User with this username already exists';
+    }
+
+   
+
+    if (Object.keys(fieldErrors).length > 0) {
+      res.status(400).json({ fields: fieldErrors });
       return;
     }
+
     const newUser = new User({ fullName, userName, email, password });
     await newUser.save();
     res.status(201).json({
@@ -35,17 +54,15 @@ export const registerUser = async (
       'Error registering user:',
       error instanceof Error ? error.message : error
     );
+
     res.status(500).json({
-      message: 'Error with registering user',
+      general: 'Error with registering user',
       error: error instanceof Error ? error.message : error,
     });
   }
 };
 
-export const loginUser = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -78,7 +95,10 @@ export const loginUser = async (
       sameSite: 'strict', //защита от CSRF
       maxAge: 1000 * 60 * 60 * 24, // 1 day in ms
     });
-    res.json({ message: 'User logged in successfully' });
+    res.json({
+      message: 'User logged in successfully',
+      user: { _id: user._id },
+    });
   } catch (error) {
     console.error('Error with login user');
     res.status(500).json({
@@ -93,7 +113,6 @@ export const logoutUser = async (
   res: Response
 ): Promise<void> => {
   try {
-  
     res.clearCookie('token', {
       httpOnly: true,
       secure: false,
@@ -143,12 +162,10 @@ export const forgotPassword = async (
     res.json({ message: 'Reset code sent to email' });
   } catch (error) {
     console.error('Error with sending reset code');
-    res
-      .status(500)
-      .json({
-        message: 'Server error',
-        error: error instanceof Error ? error.message : error,
-      });
+    res.status(500).json({
+      message: 'Server error',
+      error: error instanceof Error ? error.message : error,
+    });
   }
 };
 
@@ -181,11 +198,9 @@ export const resetPassword = async (
     res.json({ message: 'Password successfully updated' });
   } catch (error) {
     console.error('Error with  reset password');
-    res
-      .status(500)
-      .json({
-        message: 'Server error',
-        error: error instanceof Error ? error.message : error,
-      });
+    res.status(500).json({
+      message: 'Server error',
+      error: error instanceof Error ? error.message : error,
+    });
   }
 };

@@ -10,7 +10,7 @@ const ResetPasswordForm = () => {
         <img className={styles.lock} src={Lock} alt="reset password" />
         <h3>Trouble logging in?</h3>
         <p className={styles.par}>
-          Enter your email, phone, or username and we'll send you a link to get
+          Enter your email and we'll send you a link to get
           back into your account.
         </p>
         <form className={styles.form}>
@@ -18,7 +18,7 @@ const ResetPasswordForm = () => {
             <input
               className={styles.input}
               type="text"
-              placeholder="Email or Username"
+              placeholder="Email"
             />
           </div>
           <button className={styles.button}>Reset your password</button>

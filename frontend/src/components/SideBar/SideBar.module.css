@@ -37,7 +37,7 @@
 .sidebar ul {
   display: flex;
   flex-direction: column;
-  gap: 35px;
+  gap: 2px;
   list-style: none;
   padding: 0;
 }
@@ -95,4 +95,10 @@ li {
 
 .activePanel.open {
   transform: translateX(0);
+}
+
+.profile {
+    display: flex;
+    gap: 16px;
+    margin-top: 50px;
 }

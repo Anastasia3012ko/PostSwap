@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import styles from './SideBar.module.css';
 import Logo from '../../assets/images/postswap.png';
 import Home from '../../assets/icons/home.svg';
@@ -9,10 +9,12 @@ import Messages from '../../assets/icons/messenger.svg';
 import Notifications from '../../assets/icons/notifications.svg';
 import Create from '../../assets/icons/create.svg';
 import X from '../../assets/icons/closeX.svg';
+import { useSelector } from 'react-redux';
 
-const SideBar = () => {
-  const [activePanel, setActivePanel] = useState(null);
-  const [activeLink, setActiveLink] = useState(null); //
+const SideBar = ({ activePanel, setActivePanel }) => {
+  const [activeLink, setActiveLink] = useState(null); 
+  const userId = useSelector(state => state.auth.user?._id);
+  if (!userId) return null;
 
   const menuItems = [
     { name: 'Home', type: 'link', path: '/', icon: Home },
@@ -84,8 +86,15 @@ const SideBar = () => {
                 )}
               </li>
             ))}
+            
           </ul>
         </nav>
+        <div className={styles.profile} onClick={handleClick}>
+          <Link to={`/profile/${userId}`}>
+            <img src="*" alt="FotoProfile" />
+            <h4>Profile</h4>
+          </Link>
+        </div>
       </aside>
 
       {/* Active Panel */}

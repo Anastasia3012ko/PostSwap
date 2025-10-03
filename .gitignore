@@ -1,0 +1,12 @@
+node_modules
+.env
+# Terraform state files
+*.tfstate
+*.tfstate.*
+# Crash logs
+crash.log
+# CLI credentials / secrets
+*.tfvars
+*.tfvars.json
+# Local directories
+.terraform/

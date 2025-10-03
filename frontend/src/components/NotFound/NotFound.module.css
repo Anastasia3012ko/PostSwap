@@ -1,0 +1,20 @@
+.wrapper {
+  display: flex;
+  gap: 45px;
+  margin-top: 80px;
+  margin-left: 120px;
+}
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 50px;
+}
+.header {
+  font-size: 36px;
+}
+.par {
+    color: var(--text-color);
+    font-size: 16px;
+}
+

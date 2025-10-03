@@ -7,8 +7,8 @@
   gap: 15px;
   max-width: 350px;
   width: 100%;
-
   min-height: 640px;
+  margin-top: 80px;
   color: var(--text-color);
 }
 .containerOne,
@@ -53,6 +53,9 @@ h3 {
   gap: 8px;
   margin-top: 20px;
   width: 100%;
+}
+.inputDiv {
+ width: 100%;
 }
 .input {
   max-width: 270px;

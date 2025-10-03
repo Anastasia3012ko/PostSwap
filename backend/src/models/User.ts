@@ -47,8 +47,7 @@ const userSchema: Schema<IUser> = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: true,
-      minlength: 5,
+      required: true
     },
     about: {
       type: String,

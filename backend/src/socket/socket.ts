@@ -22,7 +22,7 @@ interface ClientToServerEvents {
 export const initSocket = (server: HTTPServer) => {
   const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
     cors: {
-      origin: 'http://localhost:3003',
+      origin: 'http://localhost:5173',
       methods: ['GET', 'POST'],
       credentials: true,
     },
