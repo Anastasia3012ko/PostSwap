@@ -30,7 +30,7 @@ export const createPost = async (
     });
     await post.save();
 
-    res.json({ message: 'Post created', post: post.toJSON() });
+    res.json({ message: 'Post created successfully', post: post });
   } catch (error) {
     res.status(500).json({
       message: 'Server error with creating post',
@@ -70,9 +70,17 @@ export const getPostById = async (req: AuthRequest, res: Response) => {
 export const getAllPosts = async (_req: AuthRequest, res: Response) => {
   try {
     const posts = await Post.find()
-      .populate('user', 'userName avatar')
+      .populate({
+        path: 'user',
+        select: 'userName avatar',
+        populate: {
+          path: 'avatar',
+          select: 'url',
+        },
+      })
       .populate('photo')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .exec();
     res.json(posts);
   } catch (error) {
     console.error(
@@ -117,7 +125,7 @@ export const updatePost = async (req: AuthRequest, res: Response) => {
   try {
     const { postId } = req.params;
     const description = req.body.description;
-    
+
     if (!description && !req.file) {
       return res.status(400).json({ message: 'Nothing to update' });
     }
@@ -187,6 +195,13 @@ export const deletePostById = async (req: AuthRequest, res: Response) => {
       return res
         .status(403)
         .json({ message: 'Forbidden: you can delete only your own post' });
+    }
+    if (post.photo) {
+      const oldPhoto = await Image.findById(post.photo);
+      if (oldPhoto) {
+        await deletePhotoFromS3(oldPhoto.filename);
+        await oldPhoto.deleteOne();
+      }
     }
 
     await Post.deleteOne({ _id: postId });

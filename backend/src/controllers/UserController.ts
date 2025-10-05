@@ -56,6 +56,60 @@ export const getUserById = async (req: AuthRequest, res: Response) => {
   }
 };
 
+export const updateAvatarOnly = async (req: AuthRequest, res: Response) => {
+  try {
+    const { userId } = req.params;
+    console.log('req.file:', req.file);
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user Id' });
+    }
+
+    if (req.userId !== userId) {
+      return res
+        .status(403)
+        .json({ message: 'Forbidden: you can update only your profile' });
+    }
+
+    const user = await User.findById(userId).populate<{ avatar: IImage | null }>('avatar');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No avatar file uploaded' });
+    }
+
+    // delete old avatar
+    if (user.avatar) {
+      await deletePhotoFromS3(user.avatar.filename);
+      await Image.findByIdAndDelete(user.avatar._id);
+    }
+
+    // new avatar
+    const file: Express.Multer.File = req.file;
+    const newImage: IImage = await uploadSinglePhoto(file, userId, 'avatar');
+
+    (user as IUser).avatar = newImage._id as Types.ObjectId;
+    await user.save();
+
+    const updatedUser = await User.findById(userId)
+      .select('-password')
+      .populate('avatar');
+
+    res.json({
+      message: 'Avatar updated successfully',
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error('Error updating avatar:', error);
+    res.status(500).json({
+      message: 'Server error',
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+};
+
 export const updateUser = async (req: AuthRequest, res: Response) => {
   try {
     const { userId } = req.params;
@@ -114,7 +168,7 @@ export const updateUser = async (req: AuthRequest, res: Response) => {
       .select('-password')
       .populate('avatar');
 
-    res.json({ message: 'Profile updated', user: updatedUser });
+    res.json({ message: 'Profile updated successfully', user: updatedUser });
   } catch (error) {
     console.error('Error with updating user profile');
     res

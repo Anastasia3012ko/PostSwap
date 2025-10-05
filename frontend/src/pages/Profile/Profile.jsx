@@ -1,46 +1,46 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import axios from "axios";
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchUserById, clearUser } from '../../redux/slices/userSlice';
+import MyProfile from '../../components/MyProfile/MyProfile';
+import styles from './Profile.module.css'
 
 function Profile() {
-  const { userId } = useParams();
   const { user: authUser } = useSelector((state) => state.auth);
+  const { user, loading, error } = useSelector((state) => state.user);
+  const { userId } = useParams();
 
-  const [profile, setProfile] = useState(null);
+  const dispatch = useDispatch();
 
   const isMyProfile = authUser?._id === userId;
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await axios.get(`http://localhost:3000/api/users/${userId}`, {
-          withCredentials: true,
-        });
-        setProfile(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchProfile();
-  }, [userId]);
+    dispatch(fetchUserById(userId));
 
-  if (!profile) return <p>Loading...</p>;
+    return () => {
+      dispatch(clearUser());
+    };
+  }, [dispatch, userId]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!user) return <p>User not found</p>;
 
   return (
-    <div>
-      <h1>{profile.username}</h1>
-      <p>Email: {profile.email}</p>
+    <div className={styles.wrapper}>
+      
 
+      {/* Аватар */}
       {isMyProfile ? (
         <div>
-          <button>Edit Profile</button>
-          <button>Upload Photo</button>
+          <MyProfile user={user} /> 
         </div>
       ) : (
         <div>
-          <button>Follow</button>
-          <button>Message</button>
+          {/* <ProfileAvatar />{' '} */}
+          {/* Можно показывать чужой аватар без редактирования */}
+          {/* <button>Follow</button>
+          <button>Message</button> */}
         </div>
       )}
     </div>

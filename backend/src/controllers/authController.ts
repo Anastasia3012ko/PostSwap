@@ -62,21 +62,43 @@ export const registerUser = async (
   }
 };
 
-export const loginUser = async (req: Request, res: Response): Promise<void> => {
+export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      res.status(400).json({ error: 'Email and password are required!' });
+    if (!req.userId) {
+      res.status(401).json({ message: 'Not authorized' });
       return;
     }
-    const user: IUser | null = await User.findOne({ email });
+
+    const user = await User.findById(req.userId).select('-password').populate({ path: 'avatar', select: 'url filename' }).exec();
     if (!user) {
-      res.status(401).json({ message: 'Incorrect email or password' });
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error('Error in getMe:', error instanceof Error ? error.message : error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { identifier, password } = req.body;
+    if (!identifier || !password) {
+      res.status(400).json({ error: 'Email or Username and password are required!' });
+      return;
+    }
+    const user: IUser | null = await User.findOne({
+      $or: [{ email: identifier }, { username: identifier }]
+    });
+    if (!user) {
+      res.status(401).json({ message: 'Incorrect email/username or password' });
       return;
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      res.status(401).json({ message: 'Incorrect email or password' });
+      res.status(401).json({ message: 'Incorrect email/username or password' });
       return;
     }
     if (!process.env.JWT_SECRET) {

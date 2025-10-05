@@ -98,7 +98,13 @@ li {
 }
 
 .profile {
-    display: flex;
-    gap: 16px;
-    margin-top: 50px;
+  margin-top: 50px;
+}
+.linkToProfile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.userName {
+  font-size: 16px;
 }

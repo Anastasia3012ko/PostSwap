@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../../redux/slices/authSlice';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 
+
 function LoginForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -15,16 +16,21 @@ function LoginForm() {
   );
   const [form, setForm] = useState({
       
-      email: '',
+      identifier: '',
       password: '',
     });
   
-    const handleLogin = (e) => {
-      e.preventDefault();
-      dispatch(loginUser(form));
-    };
+     const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await dispatch(loginUser(form)).unwrap();
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+  };
 
-    useEffect(() => {
+ 
+  useEffect(() => {
     if (isAuthenticated && user?._id) {
       navigate(`/profile/${user._id}`);
     }
@@ -45,9 +51,10 @@ function LoginForm() {
               <input
                 className={styles.input}
                 type="text"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                value={form.identifier}
+                onChange={(e) => setForm({ ...form, identifier: e.target.value })}
                 placeholder="Username or email"
+                required
               />
               <input
                 className={styles.input}
@@ -55,6 +62,7 @@ function LoginForm() {
                 value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
                 placeholder="Password"
+                required
               />
             </div>
             <button className={styles.button} type='submit' disabled={loading}>Log in</button>

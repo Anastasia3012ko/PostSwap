@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import styles from './SideBar.module.css';
 import Logo from '../../assets/images/postswap.png';
 import Home from '../../assets/icons/home.svg';
@@ -9,11 +10,17 @@ import Messages from '../../assets/icons/messenger.svg';
 import Notifications from '../../assets/icons/notifications.svg';
 import Create from '../../assets/icons/create.svg';
 import X from '../../assets/icons/closeX.svg';
-import { useSelector } from 'react-redux';
+import Avatar from '../Avatar/Avatar';
+
+
 
 const SideBar = ({ activePanel, setActivePanel }) => {
   const [activeLink, setActiveLink] = useState(null); 
-  const userId = useSelector(state => state.auth.user?._id);
+  const user = useSelector(state => state.auth.user);
+  const userId = user?._id
+  
+  
+  const avatarUrl = user?.avatar?.url || null;
   if (!userId) return null;
 
   const menuItems = [
@@ -40,10 +47,7 @@ const SideBar = ({ activePanel, setActivePanel }) => {
   return (
     <>
       {/* Overlay */}
-      <div
-        className={`${styles.overlay} ${activePanel ? styles.active : ''}`}
-        onClick={closePanel}
-      ></div>
+      {activePanel && <div className={`${styles.overlay} ${styles.active}`} onClick={closePanel}></div>}
 
       {/* Sidebar */}
       <aside className={styles.sidebar}>
@@ -90,9 +94,10 @@ const SideBar = ({ activePanel, setActivePanel }) => {
           </ul>
         </nav>
         <div className={styles.profile} onClick={handleClick}>
-          <Link to={`/profile/${userId}`}>
-            <img src="*" alt="FotoProfile" />
-            <h4>Profile</h4>
+          <Link className={styles.linkToProfile} to={`/profile/${userId}`}>
+            {user.avatar && <Avatar src={avatarUrl}
+      size={24}/>}
+            <p className={styles.userName}>{user?.userName || 'Profile'}</p>
           </Link>
         </div>
       </aside>
