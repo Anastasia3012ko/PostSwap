@@ -1,0 +1,24 @@
+.buttonContainer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+.message {
+  background: rgba(239, 239, 239, 1);
+  color: black;
+  font-size: 14px;
+  max-width: 170px;
+  width: 100%;
+  text-align: center;
+}
+.follow {
+  max-width: 132px;
+  width: 100%;
+}
+.message,
+.follow {
+  font-size: 16px;
+  padding: 7px 0;
+  border-radius: 8px;
+}

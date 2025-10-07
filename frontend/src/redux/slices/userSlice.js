@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const initialState = {
   user: null,
+  searchResults: [],
   loading: false,
   error: null,
 };
@@ -13,15 +14,12 @@ export const fetchUserById = createAsyncThunk(
   'user/fetchById',
   async (userId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/${userId}`, 
-        {
-          withCredentials: true,
-        });
-      return response.data.user; 
+      const response = await axios.get(`${API_URL}/${userId}`, {
+        withCredentials: true,
+      });
+      return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || 'Server error'
-      );
+      return rejectWithValue(error.response?.data?.message || 'Server error');
     }
   }
 );
@@ -35,13 +33,9 @@ export const updateProfile = createAsyncThunk(
         if (data[key] !== undefined) formData.append(key, data[key]);
       }
 
-      const res = await axios.put(
-        `${API_URL}/update/${userId}`,
-        formData,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await axios.put(`${API_URL}/update/${userId}`, formData, {
+        withCredentials: true,
+      });
 
       return res.data;
     } catch (error) {
@@ -55,7 +49,7 @@ export const updateAvatar = createAsyncThunk(
   async ({ userId, avatar }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-      `${API_URL}/upload-avatar/${userId}`,
+        `${API_URL}/upload-avatar/${userId}`,
         avatar,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
@@ -71,12 +65,35 @@ export const updateAvatar = createAsyncThunk(
   }
 );
 
+export const searchUsers = createAsyncThunk(
+  'user/search',
+  async (query, { rejectWithValue }) => {
+    try {
+      if (!query || query.trim() === '') return [];
+
+      const response = await axios.post(
+        `${API_URL}/search`,
+        { query },
+        { withCredentials: true }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Server error');
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
     clearUser: (state) => {
       state.user = null;
+      state.error = null;
+      state.loading = false;
+    },
+     clearSearchResults: (state) => {
+      state.searchResults = [];
       state.error = null;
       state.loading = false;
     },
@@ -120,15 +137,29 @@ const userSlice = createSlice({
         state.user = {
           ...state.user,
           ...action.payload.user,
-          avatar: action.payload.user.avatar?.url || null
+          avatar: action.payload.user.avatar?.url || null,
         };
       })
       .addCase(updateAvatar.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      //searchUser
+      .addCase(searchUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.searchResults = []; // очистка старых результатов
+      })
+      .addCase(searchUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.searchResults = action.payload;
+      })
+      .addCase(searchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
   },
 });
 
-export const { clearUser } = userSlice.actions;
+export const { clearUser, clearSearchResults } = userSlice.actions;
 export default userSlice.reducer;

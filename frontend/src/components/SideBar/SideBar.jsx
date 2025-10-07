@@ -11,6 +11,7 @@ import Notifications from '../../assets/icons/notifications.svg';
 import Create from '../../assets/icons/create.svg';
 import X from '../../assets/icons/closeX.svg';
 import Avatar from '../Avatar/Avatar';
+import SearchUser from '../SearchUser/SearchUser';
 
 
 
@@ -112,7 +113,8 @@ const SideBar = ({ activePanel, setActivePanel }) => {
             </button>
           </div>
 
-          <p>This is context...</p>
+           {activePanel === "Search" && <SearchUser />}
+            {activePanel === "Notifications" && <p>Here will be notifications...</p>}
         </aside>
       )}
     </>

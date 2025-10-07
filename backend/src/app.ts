@@ -50,7 +50,7 @@ app.get('/', (_req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use ('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
-app.use('/api/follow', followRoutes);
+app.use('/api', followRoutes);
 //app.use('/api/like', likeRoutes)
 
 // Socket.IO

@@ -27,12 +27,22 @@
   gap: 4px;
   margin: 0;
 }
-.post,
-.imagePost {
-    margin: 0;
+
+.postPhoto {
   max-width: 307px;
   width: 100%;
   min-height: 307px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0;
+}
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .allAboutUser {
@@ -44,28 +54,21 @@
 }
 .infoName {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
 }
 .name {
   display: flex;
   align-items: center;
   gap: 23px;
 }
+
 .userName {
   font-size: 20px;
   font-weight: 400;
 }
-.editButton {
-  border-radius: 8px;
-  background: rgba(239, 239, 239, 1);
-  color: black;
-  font-size: 14px;
-  padding: 10px 31px;
-  max-width: 170px;
+.buttonField {
   width: 100%;
-}
-.logout {
-  background-color: white;
 }
 .infoActive {
   display: flex;
@@ -86,8 +89,6 @@
   line-height: 18px;
 }
 
-.userName {
-}
 .website {
   color: rgba(0, 55, 107, 1);
   font-size: 14px;
@@ -111,7 +112,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px; /* толщина белой рамки */
+  padding: 3px; /* толщина белой рамки */
   box-sizing: border-box;
 }
 
@@ -123,6 +124,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px; /* расстояние до фотографии */
+  padding: 2px; /* расстояние до фотографии */
   box-sizing: border-box;
 }

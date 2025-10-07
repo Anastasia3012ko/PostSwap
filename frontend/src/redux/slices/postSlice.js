@@ -27,7 +27,7 @@ export const createPost = createAsyncThunk(
 );
 
 // 
-export const getPostById = createAsyncThunk(
+export const fetchPostById = createAsyncThunk(
   'posts/getPostById',
   async (postId, { rejectWithValue }) => {
     try {
@@ -42,7 +42,7 @@ export const getPostById = createAsyncThunk(
 );
 
 // 
-export const getAllPosts = createAsyncThunk(
+export const fetchAllPosts = createAsyncThunk(
   'posts/getAllPosts',
   async (_, { rejectWithValue }) => {
     try {
@@ -57,7 +57,7 @@ export const getAllPosts = createAsyncThunk(
 );
 
 // 
-export const getAllPostsOneUser = createAsyncThunk(
+export const fetchAllPostsOneUser = createAsyncThunk(
   'posts/getAllPostsOneUser',
   async (userId, { rejectWithValue }) => {
     try {
@@ -131,43 +131,43 @@ const postsSlice = createSlice({
       })
 
       // getPostById
-      .addCase(getPostById.pending, (state) => {
+      .addCase(fetchPostById.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getPostById.fulfilled, (state, action) => {
+      .addCase(fetchPostById.fulfilled, (state, action) => {
         state.loading = false;
         state.currentPost = action.payload;
       })
-      .addCase(getPostById.rejected, (state, action) => {
+      .addCase(fetchPostById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
       // getAllPosts
-      .addCase(getAllPosts.pending, (state) => {
+      .addCase(fetchAllPosts.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getAllPosts.fulfilled, (state, action) => {
+      .addCase(fetchAllPosts.fulfilled, (state, action) => {
         state.loading = false;
         state.posts = action.payload;
       })
-      .addCase(getAllPosts.rejected, (state, action) => {
+      .addCase(fetchAllPosts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
       // getAllPostsOneUser
-      .addCase(getAllPostsOneUser.pending, (state) => {
+      .addCase(fetchAllPostsOneUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getAllPostsOneUser.fulfilled, (state, action) => {
+      .addCase(fetchAllPostsOneUser.fulfilled, (state, action) => {
         state.loading = false;
         state.posts = action.payload;
       })
-      .addCase(getAllPostsOneUser.rejected, (state, action) => {
+      .addCase(fetchAllPostsOneUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

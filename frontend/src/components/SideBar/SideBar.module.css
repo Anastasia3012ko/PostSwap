@@ -57,12 +57,17 @@ li {
   font-size: 18px;
   font-weight: 700;
   transform: ease 1s;
+
 }
 
 .sidebar button,
 .activePanel button {
   background: none;
 }
+button:hover {
+  background: none;
+}
+
 
 .icon {
   width: 20px;

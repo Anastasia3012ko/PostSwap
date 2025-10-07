@@ -1,0 +1,74 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 100px;
+  padding-left: 100px;
+  z-index: 50;
+}
+
+.modalContent {
+  background-color: #ffffff;
+  width: 1000px;
+  height: 722px;
+  max-height: 90vh;
+  border-radius: 3px;
+  position: relative;
+  overflow: auto; /* for scroll */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.avatarWrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(
+    45deg,
+    #feda75,
+    #fa7e1e,
+    #d62976,
+    #962fbf,
+    #4f5bd5
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  box-sizing: border-box;
+}
+
+.avatarInnerWrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px;
+  box-sizing: border-box;
+}
+.postWrapper {
+  display: flex;
+}
+.postPhoto {
+  max-width: 577px;
+  width: 100%;
+  min-height: 722px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.container {
+}
+.userData {
+}

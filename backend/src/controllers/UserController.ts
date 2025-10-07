@@ -3,14 +3,18 @@ import mongoose, { Types } from 'mongoose';
 import User, { IUser } from '../models/User.js';
 import Image, { IImage } from '../models/Image.js';
 import Post from '../models/Post.js';
+import Follow from '../models/Follow.js';
 import  '../models/Follow.js';
 import { uploadSinglePhoto, deletePhotoFromS3 } from '../utils/s3.js';
 import { AuthRequest } from '../middlewares/authMiddleware.js';
 
+
 export const getUserById = async (req: AuthRequest, res: Response) => {
   try {
     const requestedUserId = req.params.userId;
+    const authUserId = req.userId;
     console.log('Requested ID:', req.params.userId);
+
 
     if (!requestedUserId || !mongoose.Types.ObjectId.isValid(requestedUserId)) {
       return res.status(400).json({ message: 'Invalid user Id' });
@@ -43,9 +47,17 @@ export const getUserById = async (req: AuthRequest, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+    const isFollowing = authUserId
+      ? await Follow.exists({ follower: authUserId, following: requestedUserId })
+      : false;
+
     const postCount = await Post.countDocuments({ user: requestedUserId });
 
-    res.json({ user, postCount });
+    res.json({
+      ...user.toJSON(),
+      postCount,
+      isFollowing,
+    });
   } catch (error) {
     res
       .status(500)
@@ -177,5 +189,33 @@ export const updateUser = async (req: AuthRequest, res: Response) => {
         message: 'Server error',
         error: error instanceof Error ? error.message : error,
       });
+  }
+};
+
+export const searchUsers = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { query } = req.body as { query?: string };
+
+    if (!query || query.trim().length < 2) {
+      res.status(200).json([]);
+      return;
+    }
+    console.log(req.body);
+    
+
+    const trimmedQuery = query.trim();
+
+    const users = await User.find(
+      { userName: { $regex: trimmedQuery, $options: 'i' } },
+      { userName: 1, avatar: 1 } 
+    ).populate('avatar');
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Error with searching users:', error, req.body);
+    res.status(500).json({
+      message: 'Server error',
+      error: error instanceof Error ? error.message : error,
+    });
   }
 };
