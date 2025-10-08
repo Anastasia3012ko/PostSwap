@@ -88,6 +88,7 @@
 .link {
   font-size: 12px;
   margin-bottom: 23px;
+  color: rgba(0, 55, 107, 1);
 }
 .parTwo {
   font-size: 14px;
@@ -97,4 +98,5 @@
   width: 100%;
   margin-top: 15px;
   margin-bottom: 22px;
+  background-color: rgba(0, 149, 246, 1);
 }

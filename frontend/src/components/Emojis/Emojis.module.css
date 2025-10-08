@@ -1,0 +1,61 @@
+.commentWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.commentForm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.commentInput {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+}
+
+.sendButton {
+  padding: 8px 12px;
+  border: none;
+  background-color: #0095f6;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.emojiButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Панель смайликов */
+.emojiPicker {
+  position: absolute;
+  bottom: 60px; /* выезжает над полем ввода */
+  left: 0;
+  width: 100%;
+  max-width: 300px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 100;
+}
+
+.emoji {
+  font-size: 22px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.emoji:hover {
+  transform: scale(1.2);
+}

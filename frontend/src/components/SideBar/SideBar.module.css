@@ -64,7 +64,7 @@ li {
 .activePanel button {
   background: none;
 }
-button:hover {
+.sidebar button:hover {
   background: none;
 }
 

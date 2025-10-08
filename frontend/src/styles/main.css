@@ -13,7 +13,6 @@ main {
 a {
   text-decoration: none;
   cursor: pointer;
-  color: rgba(0, 55, 107, 1);
 }
 input {
   font-family: "Roboto", sans-serif; 
@@ -24,7 +23,6 @@ button {
   border: none;
   font-family: "Roboto", sans-serif; 
   border-radius: 8px;
-  background: rgba(0, 149, 246, 1);
   color: white;
   padding: 7px 0;
 }

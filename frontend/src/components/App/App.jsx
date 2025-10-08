@@ -102,16 +102,6 @@ function App() {
           }
         />
         <Route
-          path="/addPost"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <AddPost />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="*"
           element={
             <Layout>

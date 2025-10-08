@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "devdocker": "vite --host",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -13,8 +14,9 @@
     "@reduxjs/toolkit": "^2.9.0",
     "axios": "^1.12.2",
     "react": "^19.1.1",
-    "react-avatar-editor": "^13.0.2",
     "react-dom": "^19.1.1",
+    "react-dropzone": "^14.3.8",
+    "react-easy-crop": "^5.5.3",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.3",
     "redux-persist": "^6.0.0"

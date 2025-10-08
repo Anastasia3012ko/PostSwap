@@ -1,33 +1,32 @@
-import React, { useRef, useState, useEffect } from 'react';
-import AvatarEditor from 'react-avatar-editor';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import Cropper from 'react-easy-crop';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateAvatar } from '../../redux/slices/userSlice';
 import styles from './UpdateAvatar.module.css';
 import Avatar from '../Avatar/Avatar';
+import getCroppedImg from '../../utils/cropImage';
 
-const UpdateAvatar = ({
-  size = 130,
-  showUpdateButton = true,
-  user = user
-}) => {
-  const editorRef = useRef(null);
+const UpdateAvatar = ({ size = 130, showUpdateButton = true, user = user }) => {
   const fileInputRef = useRef(null);
+  const dispatch = useDispatch();
+  const registeredUserId = useSelector((state) => state.auth.user?._id);
+  const newAvatarUrl = useSelector((state) => state.user.user?.avatar);
 
   const [image, setImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [scale, setScale] = useState(1);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const avatarUrl = user?.avatar?.url || null;
 
-  const dispatch = useDispatch();
-  const registeredUserId = useSelector(state => state.auth.user?._id);
-  const newAvatarUrl = useSelector(state => state.user.user?.avatar);
+  const avatarUrl = user?.avatar?.url || null;
 
   useEffect(() => {
     if (!showModal) {
       setImage(null);
-      setScale(1);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
       setError(null);
       setLoading(false);
     }
@@ -48,22 +47,27 @@ const UpdateAvatar = ({
     }
 
     setError(null);
-    setImage(file);
-    setShowModal(true);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImage(reader.result);
+      setShowModal(true);
+    };
+    reader.readAsDataURL(file);
   };
 
-  const handleUpload = async () => {
-    if (!editorRef.current || !image || !registeredUserId) return;
+  const onCropComplete = useCallback((croppedArea, croppedPixels) => {
+    setCroppedAreaPixels(croppedPixels);
+  }, []);
+
+  const handleUpload = useCallback(async () => {
+    if (!image || !registeredUserId || !croppedAreaPixels) return;
     setLoading(true);
     setError(null);
 
     try {
-      const canvas = editorRef.current.getImageScaledToCanvas();
-      const blob = await new Promise(resolve =>
-        canvas.toBlob(resolve, 'image/png')
-      );
-
-      if (!blob) throw new Error('Failed to create image');
+      const croppedImage = await getCroppedImg(image, croppedAreaPixels);
+      const res = await fetch(croppedImage);
+      const blob = await res.blob();
 
       const formData = new FormData();
       formData.append('avatar', blob, 'avatar.png');
@@ -82,26 +86,28 @@ const UpdateAvatar = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [image, croppedAreaPixels, registeredUserId, dispatch]);
 
-  const openFileDialog = () => fileInputRef.current && fileInputRef.current.click();
+  const openFileDialog = () =>
+    fileInputRef.current && fileInputRef.current.click();
+
+  const handleDelete = () => {
+    setImage(null);
+    setShowModal(false);
+    dispatch(updateAvatar({ userId: registeredUserId, avatar: null }));
+  };
 
   return (
     <div className={styles.wrapper}>
-      {/* Avatar display */}
       <div className={styles.avatarWrapper}>
-        <Avatar
-          src={!newAvatarUrl ? avatarUrl : newAvatarUrl }
-          size={size}
-        />
-
-        {/* Optional button */}
-      {showUpdateButton && (
-        <button className={styles.updateButton} onClick={openFileDialog}>New photo</button>
-      )}
+        <Avatar src={newAvatarUrl || avatarUrl} size={size} />
+        {showUpdateButton && (
+          <button className={styles.updateButton} onClick={openFileDialog}>
+            New photo
+          </button>
+        )}
       </div>
 
-      {/* Hidden file input */}
       <input
         type="file"
         accept="image/*"
@@ -110,37 +116,40 @@ const UpdateAvatar = ({
         onChange={handleFileChange}
       />
 
-      
-
-      {/* Modal */}
       {showModal && (
         <div className={styles.modal} onClick={() => setShowModal(false)}>
           <div
             className={styles.modalContent}
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             {image && (
-              <AvatarEditor
-                ref={editorRef}
-                image={image}
-                width={200}
-                height={200}
-                border={50}
-                borderRadius={100}
-                scale={scale}
-              />
-            )}
+              <div className={styles.cropContainer}>
+                <Cropper
+                  image={image}
+                  crop={crop}
+                  zoom={zoom}
+                  
+                  minZoom={1}
+                  maxZoom={3}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                />
+                {/* круглая маска поверх */}
+                <div className={styles.cropRoundMask}></div>
 
-            <input
-              type="range"
-              min="1"
-              max="3"
-              step="0.1"
-              value={scale}
-              onChange={e => setScale(parseFloat(e.target.value))}
-              className={styles.scaleInput}
-              disabled={!image}
-            />
+                {/* слайдер масштаба */}
+                <input
+                  type="range"
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  value={zoom}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                  className={styles.scaleInput}
+                />
+              </div>
+            )}
 
             {error && <p className={styles.error}>{error}</p>}
 
@@ -148,6 +157,7 @@ const UpdateAvatar = ({
               <button onClick={handleUpload} disabled={loading}>
                 {loading ? 'Saving...' : 'Save'}
               </button>
+              <button onClick={handleDelete}>Delete</button>
               <button
                 onClick={() => {
                   setShowModal(false);

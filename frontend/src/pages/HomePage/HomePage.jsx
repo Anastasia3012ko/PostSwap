@@ -1,32 +1,54 @@
-import React, {useEffect} from 'react'
-import styles from './HomePage.module.css'
+import React, { useEffect, useState } from 'react';
+import styles from './HomePage.module.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchAllPosts } from '../../redux/slices/postSlice';
 import PostHome from '../../components/PostHome/PostHome';
+import PostModal from '../../components/PostModal/PostModal';
 
 const HomePage = () => {
-  const { posts, loading, error } = useSelector((state) => state.post);
-const dispatch = useDispatch();
+  const { posts, loading, error } = useSelector(state => state.post);
+  const dispatch = useDispatch();
 
-useEffect(() => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
+
+  useEffect(() => {
     dispatch(fetchAllPosts());
   }, [dispatch]);
 
-if (loading) return <p>Loading...</p>;
-if (error) return <p>Error: {error}</p>;
-if (!posts || posts.length === 0) return <p>No posts found</p>;
-  console.log(posts);
+  const openModal = (post) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedPost(null);
+    setIsModalOpen(false);
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!posts || posts.length === 0) return <p>No posts found</p>;
 
   return (
     <div className={styles.wrapper}>
-      {posts && posts.map(post => (
-        <div key={post._id}>
-          <PostHome post={post}/>
-        </div>
-        
+      {posts.map(post => (
+        <PostHome
+          key={post._id}
+          post={post}
+          onOpenModal={() => openModal(post)}
+        />
       ))}
-    </div>
-  )
-}
 
-export default HomePage
+      <PostModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        post={selectedPost}
+      />
+    </div>
+  );
+};
+
+export default HomePage;
+
+

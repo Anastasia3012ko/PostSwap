@@ -1,0 +1,21 @@
+# Исключаем зависимости (они ставятся внутри контейнера)
+node_modules
+npm-debug.log
+yarn-error.log
+
+
+# Кеши и временные файлы
+.DS_Store
+dist
+build
+*.log
+
+
+# Настройки IDE / редактора
+.vscode
+.idea
+*.iml
+
+# Git-файлы
+.git
+.gitignore

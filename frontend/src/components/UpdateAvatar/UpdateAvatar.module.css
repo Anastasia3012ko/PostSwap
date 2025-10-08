@@ -87,3 +87,27 @@ button:disabled {
   background-color: #aaa;
   cursor: not-allowed;
 }
+
+.cropContainer {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  background: #333;
+}
+
+.cropRoundMask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  pointer-events: none; 
+}
+
+.scaleInput {
+  margin-top: 15px;
+  width: 100%;
+}

@@ -1,0 +1,23 @@
+# Зависимости — устанавливаются заново внутри контейнера
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Временные и системные файлы
+.DS_Store
+*.log
+*.tmp
+
+# Настройки IDE / редакторов
+.vscode
+.idea
+*.iml
+
+# Git-артефакты
+.git
+.gitignore
+
+# Кеш сборки TypeScript (если есть)
+dist
+build
+tsconfig.tsbuildinfo

@@ -60,6 +60,9 @@
     background-color: white;
     font-size: 12px;
 }
+.button:hover{ 
+  background: none;
+}
 .date {
     font-size: 12px;
     

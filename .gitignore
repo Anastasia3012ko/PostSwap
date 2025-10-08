@@ -10,3 +10,8 @@ crash.log
 *.tfvars.json
 # Local directories
 .terraform/
+
+Dockerfile
+docker-compose.yml
+
+
