@@ -12,16 +12,15 @@ import Create from '../../assets/icons/create.svg';
 import X from '../../assets/icons/closeX.svg';
 import Avatar from '../Avatar/Avatar';
 import SearchUser from '../SearchUser/SearchUser';
-
-
+import CreatePostModal from '../CreatePostModal/CreatePostModal';
 
 const SideBar = ({ activePanel, setActivePanel }) => {
-  const [activeLink, setActiveLink] = useState(null); 
+  const [activeLink, setActiveLink] = useState(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const user = useSelector(state => state.auth.user);
-  const userId = user?._id
-  
-  
+  const userId = user?._id;
   const avatarUrl = user?.avatar?.url || null;
+
   if (!userId) return null;
 
   const menuItems = [
@@ -30,16 +29,18 @@ const SideBar = ({ activePanel, setActivePanel }) => {
     { name: 'Explore', type: 'link', path: '/explore', icon: Explore },
     { name: 'Message', type: 'link', path: '/chat', icon: Messages },
     { name: 'Notifications', type: 'panel', icon: Notifications },
-    { name: 'Create', type: 'link', path: '/addPost', icon: Create },
+    { name: 'Create', type: 'modal', icon: Create }, // теперь Create типа modal
   ];
 
   const handleClick = (item) => {
     if (item.type === 'panel') {
       setActivePanel(activePanel === item.name ? null : item.name);
       setActiveLink(null);
-    } else {
+    } else if (item.type === 'link') {
       setActivePanel(null);
       setActiveLink(item.name);
+    } else if (item.type === 'modal' && item.name === 'Create') {
+      setIsCreateModalOpen(true);
     }
   };
 
@@ -47,7 +48,7 @@ const SideBar = ({ activePanel, setActivePanel }) => {
 
   return (
     <>
-      {/* Overlay */}
+      {/* Overlay для панели */}
       {activePanel && <div className={`${styles.overlay} ${styles.active}`} onClick={closePanel}></div>}
 
       {/* Sidebar */}
@@ -65,39 +66,25 @@ const SideBar = ({ activePanel, setActivePanel }) => {
                     }
                     onClick={() => handleClick(item)}
                   >
-                    <img
-                      src={item.icon}
-                      alt={item.name}
-                      className={styles.icon}
-                    />
+                    <img src={item.icon} alt={item.name} className={styles.icon} />
                     {item.name}
                   </NavLink>
                 ) : (
                   <button
                     onClick={() => handleClick(item)}
-                    className={
-                      activePanel === item.name
-                        ? styles.linkActive
-                        : styles.link
-                    }
+                    className={activePanel === item.name ? styles.linkActive : styles.link}
                   >
-                    <img
-                      src={item.icon}
-                      alt={item.name}
-                      className={styles.icon}
-                    />
+                    <img src={item.icon} alt={item.name} className={styles.icon} />
                     {item.name}
                   </button>
                 )}
               </li>
             ))}
-            
           </ul>
         </nav>
-        <div className={styles.profile} onClick={handleClick}>
+        <div className={styles.profile}>
           <Link className={styles.linkToProfile} to={`/profile/${userId}`}>
-            {user.avatar && <Avatar src={avatarUrl}
-      size={24}/>}
+            {user.avatar && <Avatar src={avatarUrl} size={24} />}
             <p className={styles.userName}>{user?.userName || 'Profile'}</p>
           </Link>
         </div>
@@ -113,12 +100,19 @@ const SideBar = ({ activePanel, setActivePanel }) => {
             </button>
           </div>
 
-           {activePanel === "Search" && <SearchUser />}
-            {activePanel === "Notifications" && <p>Here will be notifications...</p>}
+          {activePanel === "Search" && <SearchUser />}
+          {activePanel === "Notifications" && <p>Here will be notifications...</p>}
         </aside>
       )}
+
+      {/* Create Post Modal */}
+      <CreatePostModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </>
   );
 };
 
 export default SideBar;
+

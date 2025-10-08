@@ -47,10 +47,13 @@ export const getPostById = async (req: AuthRequest, res: Response) => {
     }
 
     const post = await Post.findById(postId)
+      .select(
+        'user photo description likesCount commentsCount createdAt updatedAt'
+      )
       .populate({
         path: 'user',
         select: 'userName avatar _id',
-        populate: { path: 'avatar', select: 'url' }, 
+        populate: { path: 'avatar', select: 'url' },
       })
       .populate({ path: 'photo', select: 'url' });
 

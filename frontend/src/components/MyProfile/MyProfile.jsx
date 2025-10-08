@@ -20,7 +20,7 @@ const MyProfile = ({ user, children }) => {
 
   return (
     <div className={styles.wrapper}>
-      {/* Верхняя часть с инфо о пользователе */}
+      
       <div className={styles.containerOne}>
         <div className={styles.avatar}>
           {user.avatar && (

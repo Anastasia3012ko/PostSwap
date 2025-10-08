@@ -9,7 +9,8 @@ export function formatTimeAgo(dateString) {
     const msInWeek = msInDay * 7;
     const msInMonth = msInDay * 30; // approximate month
     const msInYear = msInDay * 365;
-
+    
+    if (diffMs < msInMinute) return "now";
     if (diffMs < msInHour) {
         const minutes = Math.floor(diffMs / msInMinute);
         return minutes <= 1 ? "1 minute" : `${minutes} minutes`;
