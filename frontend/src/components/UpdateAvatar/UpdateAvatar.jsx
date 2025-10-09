@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateAvatar } from '../../redux/slices/userSlice';
 import styles from './UpdateAvatar.module.css';
 import Avatar from '../Avatar/Avatar';
-import getCroppedImg from '../../utils/cropImage';
+import getCroppedImage from '../../utils/getCoppedImage';
 
 const UpdateAvatar = ({ size = 130, showUpdateButton = true, user = user }) => {
   const fileInputRef = useRef(null);
@@ -65,12 +65,10 @@ const UpdateAvatar = ({ size = 130, showUpdateButton = true, user = user }) => {
     setError(null);
 
     try {
-      const croppedImage = await getCroppedImg(image, croppedAreaPixels);
-      const res = await fetch(croppedImage);
-      const blob = await res.blob();
+      const croppedFile = await getCroppedImage(image, croppedAreaPixels);
 
       const formData = new FormData();
-      formData.append('avatar', blob, 'avatar.png');
+      formData.append('avatar', croppedFile, 'avatar.png');
 
       const resultAction = await dispatch(
         updateAvatar({ userId: registeredUserId, avatar: formData })
@@ -128,7 +126,6 @@ const UpdateAvatar = ({ size = 130, showUpdateButton = true, user = user }) => {
                   image={image}
                   crop={crop}
                   zoom={zoom}
-                  
                   minZoom={1}
                   maxZoom={3}
                   onCropChange={setCrop}

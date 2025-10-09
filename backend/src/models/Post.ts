@@ -13,8 +13,11 @@ export interface IPost extends Document {
   createdAt: Date;
   updatedAt: Date;
 
-  likes?: (ILike & Document)[]; // virtual
-  comments?: (IComment & Document)[]; // virtual
+  likes?: Types.ObjectId[];    
+  comments?: Types.ObjectId[]; 
+
+  // likes?: (ILike & Document)[]; // virtual
+  // comments?: (IComment & Document)[]; // virtual
   
 }
 
@@ -31,8 +34,10 @@ const postSchema: Schema<IPost> = new Schema<IPost>(
       default: '',
       maxLength: [1000, 'Description cannot exceed 1000 characters'],
     },
-    likesCount: { type: Number, default: 0 },
-    commentsCount: { type: Number, default: 0 },
+    likes: [{ type: Schema.Types.ObjectId, ref: 'Like' }],
+    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
+    // likesCount: { type: Number, default: 0 },
+    // commentsCount: { type: Number, default: 0 },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

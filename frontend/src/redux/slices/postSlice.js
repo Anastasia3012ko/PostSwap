@@ -16,9 +16,10 @@ export const createPost = createAsyncThunk(
   'posts/createPost',
   async (formData, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${API_URL}/`, formData,{
-          withCredentials: true,
-        });
+      const res = await axios.post(`${API_URL}/`, formData, {
+  headers: { "Content-Type": "multipart/form-data" },
+  withCredentials: true,
+});
       return res.data.post;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);

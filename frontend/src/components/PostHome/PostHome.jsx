@@ -5,10 +5,15 @@ import { formatTimeAgo } from '../../utils/formatTimeAgo';
 import Like from '../../assets/icons/like.svg';
 import Comment from '../../assets/icons/comment.svg';
 import { Link } from 'react-router-dom';
+import LikeButton from '../LikeButton/LikeButton';
+import { useSelector } from 'react-redux';
 
 
 const PostHome = ({ post, onOpenModal }) => {
-  
+  const likesCount = useSelector(
+    (state) => state.likes.entities[post._id] ?? post.likesCount
+  );
+
   const timeAgo = formatTimeAgo(post.createdAt);
   return (
     <div className={styles.postComponent}>
@@ -39,10 +44,10 @@ const PostHome = ({ post, onOpenModal }) => {
     
       <div className={styles.reactions}>
         <div className={styles.icon}>
-          <img src={Like} alt="like" />
+          <LikeButton postId={post._id}/>
           <img src={Comment} alt="comment" />
         </div>
-        <p className={styles.likes}>{post.likesCount} likes</p>
+        <p className={styles.likes}>{likesCount} likes</p>
         {/* <div className={styles.comments}>
           <h4>{post.user.userName}</h4>
           <p>{post.description}</p>

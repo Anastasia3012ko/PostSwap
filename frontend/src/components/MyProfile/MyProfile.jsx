@@ -40,13 +40,13 @@ const MyProfile = ({ user, children }) => {
           </div>
           <div className={styles.infoActive}>
             <p className={styles.par}>
-              <span className={styles.number}>{user.postsCount || 0}</span> posts
+              <span className={styles.number}>{user.posts.length|| 0}</span> posts
             </p>
             <p className={styles.par}>
-              <span className={styles.number}>{user.followersCount || 0}</span> followers
+              <span className={styles.number}>{user.followers.length || 0}</span> followers
             </p>
             <p className={styles.par}>
-              <span className={styles.number}>{user.followingCount || 0}</span> following
+              <span className={styles.number}>{user.following.length || 0}</span> following
             </p>
           </div>
           <div className={styles.about}>

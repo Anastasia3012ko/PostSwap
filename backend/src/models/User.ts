@@ -1,3 +1,13 @@
+
+
+  
+
+
+
+    
+
+   
+
 import mongoose, { Document, Schema, Types, Model } from 'mongoose';
 import bcrypt from "bcrypt";
 import { IImage } from './Image.js';
@@ -19,10 +29,13 @@ export interface IUser extends Document {
 
   resetCode?: number;
   resetCodeExpires?: number;
+  posts?: Types.ObjectId[];        
+  followers?: Types.ObjectId[];    
+  following?: Types.ObjectId[];    
 
-  posts?: (IPost & Document)[]; // virtual
-  followers?: (IFollow & Document)[]; // virtual
-  following?: (IFollow & Document)[]; // virtual
+  // posts?: (IPost & Document)[]; // virtual
+  // followers?: (IFollow & Document)[]; // virtual
+  // following?: (IFollow & Document)[]; // virtual
 }
 
 const userSchema: Schema<IUser> = new Schema<IUser>(
@@ -59,6 +72,10 @@ const userSchema: Schema<IUser> = new Schema<IUser>(
       default: '',
     },
     avatar: { type: Schema.Types.ObjectId, ref: 'Image', default: null },
+
+    posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
+    followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    following: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 
     postsCount: { type: Number, default: 0 },
     followersCount: { type: Number, default: 0 },

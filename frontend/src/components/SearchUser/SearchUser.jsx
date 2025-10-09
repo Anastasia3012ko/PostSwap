@@ -3,11 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { searchUsers, clearSearchResults } from '../../redux/slices/userSlice';
 import Avatar from '../Avatar/Avatar';
 import styles from './SearchUser.module.css';
+import { Link } from 'react-router-dom';
 
 const SearchUser = () => {
   const [query, setQuery] = useState('');
   const dispatch = useDispatch();
-  const { searchResults, loading, error } = useSelector(state => state.user);
+  const { searchResults, loading, error } = useSelector((state) => state.user);
   const debounceRef = useRef(null);
 
   //
@@ -27,22 +28,21 @@ const SearchUser = () => {
     return () => clearTimeout(debounceRef.current);
   }, [query, dispatch]);
 
-
   const handleCloseSearch = () => {
     setQuery('');
     dispatch(clearSearchResults());
   };
-console.log(searchResults)
+  console.log(searchResults);
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.inputWrapper}>
         <input
           className={styles.input}
-          type='text'
-          placeholder='Search'
+          type="text"
+          placeholder="Search"
           value={query}
-          onChange={e => setQuery(e.target.value)}
+          onChange={(e) => setQuery(e.target.value)}
         />
         {query && (
           <button className={styles.clearBtn} onClick={handleCloseSearch}>
@@ -53,16 +53,25 @@ console.log(searchResults)
 
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <h3 style={{fontSize: '16px', marginTop: '35px', marginLeft: '16px'}}>Recent</h3>
-      <ul className={styles.list}>
-        {searchResults.map(user => (
-          <li key={user._id} className={styles.li}>
-            <Avatar size={38} src={user.avatar?.url} />
-            <h5 className={styles.userName}>{user.userName}</h5>
-            
-          </li>
-        ))}
-      </ul>
+      {searchResults.length > 0 && (
+        <>
+          <h3
+            style={{ fontSize: '16px', marginTop: '35px', marginLeft: '16px' }}
+          >
+            Recent
+          </h3>
+          <ul className={styles.list}>
+            {searchResults.map((user) => (
+              <li key={user._id} className={styles.li}>
+                <Link to={`/profile/${user._id}`} className={styles.link}>
+                  <Avatar size={38} src={user.avatar?.url} />
+                  <h5 className={styles.userName}>{user.userName}</h5>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   );
 };

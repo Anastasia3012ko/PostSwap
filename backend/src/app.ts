@@ -9,7 +9,7 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import postRoutes from './routes/postRouter.js';
 import followRoutes from './routes/followRoutes.js';
-// import likeRoutes from './routes/likeRoutes.js';
+import likeRoutes from './routes/likeRoutes.js';
 
 import { initSocket } from './socket/socket.js';
 
@@ -51,7 +51,7 @@ app.use('/api/auth', authRoutes);
 app.use ('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api', followRoutes);
-//app.use('/api/like', likeRoutes)
+app.use('/api/likes', likeRoutes)
 
 // Socket.IO
 initSocket(server);
