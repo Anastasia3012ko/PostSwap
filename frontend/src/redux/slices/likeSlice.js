@@ -1,86 +1,86 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+const initialState = {
+  entities: {}, // postId → { likesCount, userLiked }
+  loading: false,
+  error: null,
+};
 
 const API_URL = 'http://localhost:3000/api/likes';
 
-export const likePost = createAsyncThunk(
-  "likes/likePost",
-  async (postId, { rejectWithValue }) => {
-    try {
-      const res = await axios.post(`${API_URL}/${postId}`, {}, { withCredentials: true });
-      return { postId, likesCount: res.data.likesCount };
-    } catch (err) {
-      return rejectWithValue(err.response?.data?.message || err.message);
-    }
+export const fetchLikes = createAsyncThunk('likes/fetchLikes', async (_, thunkAPI) => {
+  try {
+    const res = await axios.get(`${API_URL}/`, {
+          withCredentials: true,
+        });
+    return res.data;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message || 'Error fetching likes');
   }
-);
+});
 
-export const unlikePost = createAsyncThunk(
-  "likes/unlikePost",
-  async (postId, { rejectWithValue }) => {
-    try {
-      const res = await axios.delete(`${API_URL}/${postId}`, { withCredentials: true });
-      return { postId, likesCount: res.data.likesCount };
-    } catch (err) {
-      return rejectWithValue(err.response?.data?.message || err.message);
-    }
+
+export const likePost = createAsyncThunk('likes/likePost', async (postId, thunkAPI) => {
+  try {
+    await axios.post(`${API_URL}/${postId}`, {}, {
+          withCredentials: true,
+        });
+    return postId;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message || 'Error liking post');
   }
-);
+});
 
-const likesSlice = createSlice({
-  name: "likes",
-  initialState: {
-    entities: {},   // { [postId]: likesCount }
-    userLikes: {},  // { [postId]: true/false }
-    loading: false,
-    error: null,
-  },
+
+export const unlikePost = createAsyncThunk('likes/unlikePost', async (postId, thunkAPI) => {
+  try {
+    await axios.delete(`${API_URL}/${postId}`, {
+          withCredentials: true,
+        });
+    return postId;
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message || 'Error unliking post');
+  }
+});
+
+const likeSlice = createSlice({
+  name: 'likes',
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // LIKE POST
-      .addCase(likePost.pending, (state, action) => {
-        const postId = action.meta.arg;
+      // fetchLikes
+      .addCase(fetchLikes.pending, (state) => {
         state.loading = true;
-        state.error = null;
-        state.entities[postId] = (state.entities[postId] || 0) + 1;
-        state.userLikes[postId] = true; 
       })
+      .addCase(fetchLikes.fulfilled, (state, action) => {
+        state.loading = false;
+        state.entities = action.payload;
+      })
+      .addCase(fetchLikes.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // likePost
       .addCase(likePost.fulfilled, (state, action) => {
-        const { postId, likesCount } = action.payload;
-        state.entities[postId] = likesCount;
-        state.userLikes[postId] = true;
-        state.loading = false;
+        const postId = action.payload;
+        if (state.entities[postId]) {
+          state.entities[postId].likesCount += 1;
+          state.entities[postId].userLiked = true;
+        }
       })
-      .addCase(likePost.rejected, (state, action) => {
-        const postId = action.meta.arg;
-        state.entities[postId] = Math.max((state.entities[postId] || 1) - 1, 0);
-        state.userLikes[postId] = false;
-        state.loading = false;
-        state.error = action.payload;
-      })
-      // UNLIKE POST
-      .addCase(unlikePost.pending, (state, action) => {
-        const postId = action.meta.arg;
-        state.loading = true;
-        state.error = null;
-        state.entities[postId] = Math.max((state.entities[postId] || 1) - 1, 0);
-        state.userLikes[postId] = false;
-      })
+
+      // unlikePost
       .addCase(unlikePost.fulfilled, (state, action) => {
-        const { postId, likesCount } = action.payload;
-        state.entities[postId] = likesCount;
-        state.userLikes[postId] = false;
-        state.loading = false;
-      })
-      .addCase(unlikePost.rejected, (state, action) => {
-        const postId = action.meta.arg;
-        state.entities[postId] = (state.entities[postId] || 0) + 1;
-        state.userLikes[postId] = true;
-        state.loading = false;
-        state.error = action.payload;
+        const postId = action.payload;
+        if (state.entities[postId]) {
+          state.entities[postId].likesCount = Math.max(0, state.entities[postId].likesCount - 1);
+          state.entities[postId].userLiked = false;
+        }
       });
   },
 });
 
-export default likesSlice.reducer;
+export default likeSlice.reducer;

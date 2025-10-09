@@ -6,19 +6,15 @@ import { IComment } from './Comment.js';
 
 export interface IPost extends Document {
   user: Types.ObjectId | IUser;
-  photo: Types.ObjectId | IImage; 
+  photo: Types.ObjectId | IImage;
   description?: string;
   likesCount: number;
   commentsCount: number;
   createdAt: Date;
   updatedAt: Date;
 
-  likes?: Types.ObjectId[];    
-  comments?: Types.ObjectId[]; 
-
-  // likes?: (ILike & Document)[]; // virtual
-  // comments?: (IComment & Document)[]; // virtual
-  
+  likes?: (ILike & Document)[]; // virtual
+  comments?: (IComment & Document)[]; // virtual
 }
 
 const postSchema: Schema<IPost> = new Schema<IPost>(
@@ -34,10 +30,9 @@ const postSchema: Schema<IPost> = new Schema<IPost>(
       default: '',
       maxLength: [1000, 'Description cannot exceed 1000 characters'],
     },
-    likes: [{ type: Schema.Types.ObjectId, ref: 'Like' }],
-    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
-    // likesCount: { type: Number, default: 0 },
-    // commentsCount: { type: Number, default: 0 },
+
+    likesCount: { type: Number, default: 0 },
+    commentsCount: { type: Number, default: 0 },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
@@ -49,27 +44,33 @@ postSchema.pre<IPost>('save', async function () {
         { _id: this.user },
         { $inc: { postsCount: 1 } }
       ).exec();
-      
     }
   } catch (error) {
-    
-      console.error('Error incrementing postsCount:', 
-        error instanceof Error ? error.message : error
-      );
-  }
-});
-
-postSchema.pre<IPost>('deleteOne', { document: true, query: false }, async function () {
-  try {
-    const doc = this as IPost;
-    await User.updateOne({ _id: doc.user }, { $inc: { postsCount: -1 } }).exec();
-  } catch (error) {
     console.error(
-      "Error decrementing postsCount:",
+      'Error incrementing postsCount:',
       error instanceof Error ? error.message : error
     );
   }
 });
+
+postSchema.pre<IPost>(
+  'deleteOne',
+  { document: true, query: false },
+  async function () {
+    try {
+      const doc = this as IPost;
+      await User.updateOne(
+        { _id: doc.user },
+        { $inc: { postsCount: -1 } }
+      ).exec();
+    } catch (error) {
+      console.error(
+        'Error decrementing postsCount:',
+        error instanceof Error ? error.message : error
+      );
+    }
+  }
+);
 
 postSchema.virtual('likes', {
   ref: 'Like',

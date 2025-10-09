@@ -19,6 +19,7 @@ width: 100%;
 }
 .about {
     position: absolute;
+    max-width: 300px;
     top: 16px;
     left: 88px;
     font-size: 14px;

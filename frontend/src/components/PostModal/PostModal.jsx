@@ -3,11 +3,11 @@ import styles from './PostModal.module.css';
 import Avatar from '../Avatar/Avatar';
 import { Link } from 'react-router-dom';
 import { formatTimeAgo } from '../../utils/formatTimeAgo';
-import Like from '../../assets/icons/like.svg';
 import Comment from '../../assets/icons/comment.svg';
 import Emojis from '../Emojis/Emojis';
 import { useSelector, useDispatch } from 'react-redux';
 import { deletePostById, updatePost } from '../../redux/slices/postSlice';
+import LikeButton from '../LikeButton/LikeButton';
 
 const PostModal = ({ isOpen, onClose, post, postUser }) => {
   const { user: currentUser } = useSelector((state) => state.auth);
@@ -156,7 +156,7 @@ const PostModal = ({ isOpen, onClose, post, postUser }) => {
 
             <div className={styles.containerTwo}>
               <div className={styles.icons}>
-                <img src={Like} alt="like" />
+                <LikeButton postId={post.id}/>
                 <img src={Comment} alt="comment" />
               </div>
               <h4>{post.likesCount} likes</h4>

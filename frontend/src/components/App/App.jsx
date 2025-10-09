@@ -12,7 +12,6 @@ import MyPost from '../../pages/MyPost/MyPost';
 import AddPost from '../../pages/AddPost/AddPost';
 import Messages from '../../pages/Messages/Messages';
 import EditProfile from '../../pages/EditProfile/EditProfile';
-import EditPost from '../../pages/EditPost/EditPost';
 import ProtectedRoute from '../../utils/ProtectedRoute';
 import NotFound from '../../pages/NotFoundPage/NotFoundPage';
 import { useDispatch } from 'react-redux';
@@ -87,16 +86,6 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <MyPost />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/editPost"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <EditPost />
               </Layout>
             </ProtectedRoute>
           }

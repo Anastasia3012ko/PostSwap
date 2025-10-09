@@ -6,13 +6,12 @@ import Like from '../../assets/icons/like.svg';
 import Comment from '../../assets/icons/comment.svg';
 import { Link } from 'react-router-dom';
 import LikeButton from '../LikeButton/LikeButton';
-import { useSelector } from 'react-redux';
+
 
 
 const PostHome = ({ post, onOpenModal }) => {
-  const likesCount = useSelector(
-    (state) => state.likes.entities[post._id] ?? post.likesCount
-  );
+  
+
 
   const timeAgo = formatTimeAgo(post.createdAt);
   return (
@@ -47,7 +46,7 @@ const PostHome = ({ post, onOpenModal }) => {
           <LikeButton postId={post._id}/>
           <img src={Comment} alt="comment" />
         </div>
-        <p className={styles.likes}>{likesCount} likes</p>
+        {/* <p className={styles.likes}>{likesCount} likes</p> */}
         {/* <div className={styles.comments}>
           <h4>{post.user.userName}</h4>
           <p>{post.description}</p>
